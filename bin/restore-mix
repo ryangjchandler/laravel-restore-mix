@@ -27,25 +27,25 @@ file_put_contents(getcwd() . '/webpack.mix.js', $stub);
 if (file_exists(getcwd() . '/package.json')) {
     echo "→ Update `package.json`\n";
 
-    $package = json_decode(file_get_contents(__DIR__ . '/package.json'), true);
-    $package['dependencies']['laravel-mix'] = '^6.0';
+    $package = json_decode(file_get_contents(getcwd() . '/package.json'), true);
+    $package['devDependencies']['laravel-mix'] = '^6.0';
 
     echo "→ Removing Vite dependencies\n";
 
-    if (isset($package['dependencies']['vite'])) {
-        unset($package['dependencies']['vite']);
+    if (isset($package['devDependencies']['vite'])) {
+        unset($package['devDependencies']['vite']);
     }
 
-    if (isset($package['dependencies']['laravel-vite-plugin'])) {
-        unset($package['dependencies']['laravel-vite-plugin']);
+    if (isset($package['devDependencies']['laravel-vite-plugin'])) {
+        unset($package['devDependencies']['laravel-vite-plugin']);
     }
 
-    if (isset($package['dependencies']['lodash']) && confirm('Would you like to remove Lodash?', true)) {
-        unset($package['dependencies']['lodash']);
+    if (isset($package['devDependencies']['lodash']) && confirm('Would you like to remove Lodash?', true)) {
+        unset($package['devDependencies']['lodash']);
     }
 
-    if (isset($package['dependencies']['axios']) && confirm('Would you like to remove Axios?', true)) {
-        unset($package['dependencies']['axios']);
+    if (isset($package['devDependencies']['axios']) && confirm('Would you like to remove Axios?', true)) {
+        unset($package['devDependencies']['axios']);
     }
 
     file_put_contents(getcwd() . '/package.json', json_encode($package, JSON_PRETTY_PRINT));
