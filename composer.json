@@ -1,0 +1,13 @@
+{
+    "name": "ryangjchandler/laravel-restore-mix",
+    "description": "A small CLI script that removes Vite in favour of Laravel Mix.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ryan Chandler",
+            "email": "support@ryangjchandler.co.uk"
+        }
+    ],
+    "require": {}
+}
