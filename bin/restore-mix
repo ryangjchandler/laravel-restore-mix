@@ -48,9 +48,47 @@ if (file_exists(getcwd() . '/package.json')) {
         unset($package['devDependencies']['axios']);
     }
 
+    $package['scripts'] = [
+        'dev' => 'mix',
+        'watch' => 'mix watch',
+        'prod' => 'mix --production'
+    ];
+
     file_put_contents(getcwd() . '/package.json', json_encode($package, JSON_PRETTY_PRINT));
 } else {
     echo "→ No `package.json` found, skipping step\n";
+}
+
+if (file_exists(getcwd() . '/vite.config.js')) {
+    echo "→ Removing `vite.config.js`\n";
+
+    unlink(getcwd() . '/vite.config.js');
+} else {
+    echo "→ No `vite.config.js` found, skipping step\n";
+}
+
+foreach (['.env.example', '.env'] as $file) {
+    if (file_exists(getcwd() . '/.env')) {
+        echo "→ Modifying `{$file}` variable names.\n";
+    
+        $replacements = [
+            'VITE_PUSHER_APP_KEY' => 'MIX_PUSHER_APP_KEY',
+            'VITE_PUSHER_HOST' => 'MIX_PUSHER_HOST',
+            'VITE_PUSHER_PORT' => 'MIX_PUSHER_PORT',
+            'VITE_PUSHER_SCHEME' => 'MIX_PUSHER_SCHEME',
+            'VITE_PUSHER_APP_CLUSTER' => 'MIX_PUSHER_APP_CLUSTER',
+        ];
+        
+        $contents = file_get_contents(getcwd() . '/' . $file);
+
+        foreach ($replacements as $search => $replace) {
+            $contents = str_replace($search, $replace, $contents);
+        }
+
+        file_put_contents(getcwd() . '/' . $file, $contents);
+    } else {
+        echo "→ No `{$file}` found, skipping step\n";
+    }
 }
 
 echo "✅ All done. Make sure you run `npm install` and `npm run dev` to verify changes.\n";
