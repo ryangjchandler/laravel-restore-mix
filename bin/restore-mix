@@ -1,0 +1,56 @@
+#!/usr/bin/env php
+<?php
+
+namespace RestoreMix;
+
+function confirm(string $question, bool $default = false): bool
+{
+    $output = sprintf('%s [%s/%s]: ', $question, $default ? "\033[1my\033[0m" : 'y', !$default ? "\033[1mn\033[0m" : 'n');
+    $answer = readline($output);
+
+    if (! $answer) {
+        return $default;
+    }
+
+    return $answer === 'y';
+}
+
+if (! confirm('Are you sure you want to do this?', true)) {
+    return;
+}
+
+echo "→ Creating `webpack.mix.js` file\n";
+
+$stub = file_get_contents(__DIR__ . '/../stubs/webpack.mix.js');
+file_put_contents(getcwd() . '/webpack.mix.js', $stub);
+
+if (file_exists(getcwd() . '/package.json')) {
+    echo "→ Update `package.json`\n";
+
+    $package = json_decode(file_get_contents(__DIR__ . '/package.json'), true);
+    $package['dependencies']['laravel-mix'] = '^6.0';
+
+    echo "→ Removing Vite dependencies\n";
+
+    if (isset($package['dependencies']['vite'])) {
+        unset($package['dependencies']['vite']);
+    }
+
+    if (isset($package['dependencies']['laravel-vite-plugin'])) {
+        unset($package['dependencies']['laravel-vite-plugin']);
+    }
+
+    if (isset($package['dependencies']['lodash']) && confirm('Would you like to remove Lodash?', true)) {
+        unset($package['dependencies']['lodash']);
+    }
+
+    if (isset($package['dependencies']['axios']) && confirm('Would you like to remove Axios?', true)) {
+        unset($package['dependencies']['axios']);
+    }
+
+    file_put_contents(getcwd() . '/package.json', json_encode($package, JSON_PRETTY_PRINT));
+} else {
+    echo "→ No `package.json` found, skipping step\n";
+}
+
+echo "✅ All done. Make sure you run `npm install` and `npm run dev` to verify changes.\n";

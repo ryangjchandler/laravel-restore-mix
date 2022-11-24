@@ -9,5 +9,6 @@
             "email": "support@ryangjchandler.co.uk"
         }
     ],
+    "bin": "bin/restore-mix",
     "require": {}
 }
